@@ -57,7 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _controller.addListener(() {
-      print(_controller.text);
     });
   }
 
@@ -71,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Secret Santa"),
+        title: const Text("Secret Santa"),
       ),
       body: Center(
         child: Column(

@@ -1,13 +1,17 @@
+import 'dart:math';
+
+import 'package:dest/friend.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main.dart';
 
-class FriendsPage extends StatefulWidget{
-
+class FriendsPage extends StatefulWidget {
   static const routeName = "/freinds";
 
   const FriendsPage({super.key});
+
   // final String title;
 
   @override
@@ -15,8 +19,13 @@ class FriendsPage extends StatefulWidget{
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-
   String? _teamName;
+  final List<Friend> _friends = [];
+  final List<Color> _color = [
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.purple
+  ];
 
   @override
   void initState() {
@@ -29,10 +38,12 @@ class _FriendsPageState extends State<FriendsPage> {
     final teamName = prefs.getString(teamNameKey);
 
     setState(() {
-      _teamName = "$teamName team";
+      _teamName = "$teamName's team";
     });
 
-    print("Load_Name $_teamName" );
+    if (kDebugMode) {
+      print("Load_Name $_teamName");
+    }
   }
 
   @override
@@ -42,10 +53,11 @@ class _FriendsPageState extends State<FriendsPage> {
         title: Text(_teamName ?? ""),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-          ],
+        child: ListView.separated(
+          itemBuilder: _itemBuilder,
+          separatorBuilder: _separatorBuilder,
+          itemCount: _friends.length,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -56,17 +68,59 @@ class _FriendsPageState extends State<FriendsPage> {
     );
   }
 
-  Future<void> _addPerson() async{
-
+  Widget _itemBuilder(BuildContext context, int index) {
+    return Container(
+        decoration: BoxDecoration(
+          border: const Border(
+            top: BorderSide(color: Colors.black),
+            left: BorderSide(color: Colors.black),
+            right: BorderSide(),
+            bottom: BorderSide(),
+          ),
+          borderRadius: BorderRadius.circular(25),
+          color: Colors.redAccent[100],
+        ),
+        height: 100,
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 20,
+            ),
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: _friends[index].color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              _friends[index].name,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ));
   }
 
+  Widget _separatorBuilder(BuildContext context, int index) {
+    return const SizedBox(height: 10);
+  }
 
+  Future<void> _addPerson() async {
+    final friend = Friend(
+      _friends.length, "Kent", _color[Random().nextInt(_color.length)],
+    );
+    setState(() {
+      _friends.add(friend);
+    });
+  }
 }
 
-
-
-
+/*
 Color _colorFromHex(String hexColor) {
   final hexCode = hexColor.replaceAll('#', '');
   return Color(int.parse('FF$hexCode', radix: 16));
-}
+}*/
